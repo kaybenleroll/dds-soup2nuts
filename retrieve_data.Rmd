@@ -124,3 +124,11 @@ sheet2_tbl <- read_excel(
 sheet2_tbl %>% glimpse()
 ```
 
+We now combine the two tables.
+
+```{r}
+retail_data_tbl <- list(sheet1_tbl, sheet2_tbl) %>%
+  bind_rows()
+
+retail_data_tbl %>% write_rds("data/retail_data_tbl.rds")
+```
