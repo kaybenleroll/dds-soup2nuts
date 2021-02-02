@@ -1,0 +1,134 @@
+---
+title: "Data Science Soup to Nuts: Retrieving Retail Data"
+author: "Mick Cooney <mickcooney@gmail.com>"
+date: ""
+output:
+  rmdformats::readthedown:
+    fig_caption: yes
+    theme: cerulean
+    toc_depth: 3
+    use_bookdown: yes
+
+  html_document:
+    fig_caption: yes
+    number_sections: yes
+    theme: cerulean
+    toc: yes
+    toc_depth: 3
+    toc_float:
+      smooth_scroll: FALSE
+
+  pdf_document: default
+---
+
+
+```{r knit_opts, include = FALSE}
+library(conflicted)
+library(tidyverse)
+library(magrittr)
+library(readxl)
+library(scales)
+library(cowplot)
+library(curl)
+library(glue)
+library(fs)
+
+
+source("lib_utils.R")
+
+resolve_conflicts(c("magrittr", "rlang", "dplyr", "readr", "purrr", "ggplot2"))
+
+
+knitr::opts_chunk$set(
+  tidy       = FALSE,
+  cache      = FALSE,
+  warning    = FALSE,
+  message    = FALSE,
+  fig.height =     8,
+  fig.width  =    11
+  )
+
+options(
+  width = 80L,
+  warn  = 1,
+  mc.cores = parallel::detectCores()
+  )
+
+set.seed(42)
+
+theme_set(theme_cowplot())
+```
+
+# Retrieve Data
+
+All code and some data for this workshop is contained in the repo
+
+https://github.com/kaybenleroll/dds_soup2nuts
+
+
+---
+
+We are working with the Online Retail II data available here:
+
+https://archive.ics.uci.edu/ml/machine-learning-databases/00502/online_retail_II.xlsx
+
+
+```{r }
+data_url      <- "https://archive.ics.uci.edu/ml/machine-learning-databases/00502/online_retail_II.xlsx"
+xlsx_datafile <- "data/online_retail_II.xlsx"
+
+
+if(!file_exists(xlsx_datafile)) {
+  curl_download(
+    data_url,
+    destfile = xlsx_datafile,
+    quiet    = FALSE,
+    mode     = "wb"
+    )
+} else {
+  message("File already downloaded. Skipping...")
+}
+```
+
+```{r}
+data_cols <- cols(
+  .default = col_character(),
+  
+  Quantity    = col_number(),
+  InvoiceDate = col_number(),
+  Price       = col_number()
+)
+
+sheet1_tbl <- read_excel(
+    "data/online_retail_II.xlsx",
+    sheet     = "Year 2009-2010",
+    col_types = "text"
+    ) %>%
+  format_csv() %>%
+  read_csv(
+    col_types = data_cols
+  )
+
+sheet1_tbl %>% glimpse()
+
+sheet2_tbl <- read_excel(
+    "data/online_retail_II.xlsx",
+    sheet = "Year 2010-2011",
+    col_types = "text"
+    ) %>%
+  format_csv() %>%
+  read_csv(
+    col_types = data_cols
+  )
+
+sheet2_tbl %>% glimpse()
+```
+
+We now combine the two tables.
+
+```{r}
+retail_data_tbl <- list(sheet1_tbl, sheet2_tbl) %>%
+  bind_rows()
+
+retail_data_tbl %>% write_rds("data/retail_data_tbl.rds")
+```
