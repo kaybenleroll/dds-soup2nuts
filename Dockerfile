@@ -8,6 +8,8 @@ RUN apt-get update \
   && rm -rf /var/lib/apt/lists/* \
   && install2.r --error \
     actuar \
+    arules \
+    arulesViz \
     broom \
     BTYD \
     conflicted \
@@ -23,6 +25,7 @@ RUN apt-get update \
     snakecase \
     survival \
     survminer \
+    tidygraph \
     tidyquant \
     tidytext \
     timetk
