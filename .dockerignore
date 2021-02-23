@@ -3,3 +3,5 @@
 
 data/*.xlsx
 data/*.rds
+data/*.csv
+

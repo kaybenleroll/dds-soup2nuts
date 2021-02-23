@@ -59,24 +59,27 @@ set.seed(42)
 theme_set(theme_cowplot())
 ```
 
-# Retrieve Data
-
-All code and some data for this workshop is contained in the repo
-
-https://github.com/kaybenleroll/dds_soup2nuts
 
 
 ---
 
-We are working with the Online Retail II data available here:
 
-https://archive.ics.uci.edu/ml/machine-learning-databases/00502/online_retail_II.xlsx
+All code and data for this workshop is available at the following URL:
+
+https://github.com/kaybenleroll/data_workshops
+
+Code is available in the `ws_soupnuts_202101/` directory.
 
 
-```{r }
-data_url      <- "https://archive.ics.uci.edu/ml/machine-learning-databases/00502/online_retail_II.xlsx"
-xlsx_datafile <- "data/online_retail_II.xlsx"
+# Retrieve Dataset
 
+We now want to retrieve the dataset used for this project, which is available
+at the UCI Machine Learning Repository.
+
+```{r retrieve_online_retail_data, echo=TRUE}
+data_url <- "https://archive.ics.uci.edu/ml/machine-learning-databases/00502/online_retail_II.xlsx"
+
+xlsx_datafile     <- "data/online_retail_II.xlsx"
 
 if(!file_exists(xlsx_datafile)) {
   curl_download(
@@ -86,49 +89,58 @@ if(!file_exists(xlsx_datafile)) {
     mode     = "wb"
     )
 } else {
-  message("File already downloaded. Skipping...")
+  message(glue("Datafile {xlsx_datafile} found. Skipping download."))
 }
 ```
 
-```{r}
+Now that we have downloaded the XLSX file, we want to read in the data and
+parse it.
+
+
+## Parse the Data
+
+
+```{r load_parse_data, echo=TRUE}
+retrieve_datafile <- "data/retail_data_tbl.rds"
+
+create_excel_datetime <- function(x)
+  (x * (60 * 60 * 24)) %>% as.POSIXct(origin = "1899-12-30", tz = "GMT")
+
 data_cols <- cols(
-  .default = col_character(),
-  
-  Quantity    = col_number(),
-  InvoiceDate = col_number(),
-  Price       = col_number()
+  .default      = col_character(),
+  Quantity      = col_number(),
+  InvoiceDate   = col_number(),
+  Price         = col_number()
 )
 
-sheet1_tbl <- read_excel(
-    "data/online_retail_II.xlsx",
-    sheet     = "Year 2009-2010",
-    col_types = "text"
+retail_data_tbl <- excel_sheets(xlsx_datafile) %>%
+  enframe(name = NULL, value = "excel_sheet") %>%
+  mutate(
+    data = map(excel_sheet, read_excel,
+               path      = xlsx_datafile,
+               col_types = "text")
     ) %>%
+  unnest(data) %>%
   format_csv() %>%
-  read_csv(
-    col_types = data_cols
-  )
+  read_csv(col_types = data_cols) %>%
+  mutate(
+    InvoiceDate = create_excel_datetime(InvoiceDate)
+    )
 
-sheet1_tbl %>% glimpse()
-
-sheet2_tbl <- read_excel(
-    "data/online_retail_II.xlsx",
-    sheet = "Year 2010-2011",
-    col_types = "text"
-    ) %>%
-  format_csv() %>%
-  read_csv(
-    col_types = data_cols
-  )
-
-sheet2_tbl %>% glimpse()
+retail_data_tbl %>% glimpse()
 ```
 
-We now combine the two tables.
 
-```{r}
-retail_data_tbl <- list(sheet1_tbl, sheet2_tbl) %>%
-  bind_rows()
+Finally, we output this data to the disk.
 
-retail_data_tbl %>% write_rds("data/retail_data_tbl.rds")
+```{r write_data_to_disk, echo=TRUE}
+retail_data_tbl %>% write_rds("data/retail_data_raw_tbl.rds")
+```
+
+
+
+# R Environment
+
+```{r show_session_info, echo=TRUE, message=TRUE}
+sessioninfo::session_info()
 ```
