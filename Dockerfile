@@ -1,7 +1,8 @@
-FROM rocker/verse:4.0.2
+FROM rocker/verse:4.0.4
 
 RUN apt-get update \
   && apt-get install -y --no-install-recommends \
+    graphviz \
     less \
     liblapack-dev \
     p7zip-full \
@@ -10,9 +11,14 @@ RUN apt-get update \
   && install2.r --error \
     actuar \
     arules \
+    arulesCBA \
+    arulesNBMiner \
+    arulesSequences \
     arulesViz \
-    broom \
+    BiocManager \
     BTYD \
+    BTYDplus \
+    broom \
     conflicted \
     cowplot \
     DataExplorer \

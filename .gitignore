@@ -2,7 +2,13 @@
 .RData
 
 .Rproj.user/
+*_cache/
+*_files/
+
+data/*.csv
 
 # R Environment Variables
 .Renviron
 
+*.dot
+*.png
