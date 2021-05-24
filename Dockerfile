@@ -5,7 +5,10 @@ RUN apt-get update \
     graphviz \
     less \
     liblapack-dev \
+    libtk8.6 \
+    pbzip2 \
     p7zip-full \
+    tk8.6 \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/* \
   && install2.r --error \
@@ -22,11 +25,15 @@ RUN apt-get update \
     conflicted \
     cowplot \
     DataExplorer \
+    DT \
     directlabels \
     evir \
     fitdistrplus \
     fs \
     furrr \
+    ggraph \
+    lobstr \
+    pryr \
     rfm \
     rmdformats \
     snakecase \
@@ -37,6 +44,7 @@ RUN apt-get update \
     tidytext \
     timetk
 
+RUN Rscript -e 'BiocManager::install("Rgraphviz")'
 
 COPY build/conffiles.7z           /tmp
 COPY build/docker_install_rpkgs.R /tmp
@@ -60,3 +68,4 @@ RUN 7z x /tmp/conffiles.7z \
   && cp conffiles/user-settings .rstudio/monitored/user-settings/ \
   && chown -R rstudio:rstudio /home/rstudio \
   && rm -rfv conffiles/
+
