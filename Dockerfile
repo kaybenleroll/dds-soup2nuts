@@ -1,9 +1,10 @@
-FROM rocker/verse:4.0.4
+FROM rocker/verse:4.0.5
 
 RUN apt-get update \
   && apt-get install -y --no-install-recommends \
     graphviz \
     less \
+    libgsl-dev \
     liblapack-dev \
     libtk8.6 \
     pbzip2 \
@@ -22,8 +23,10 @@ RUN apt-get update \
     BTYD \
     BTYDplus \
     broom \
+    CLVTools \
     conflicted \
     cowplot \
+    descriptr \
     DataExplorer \
     DT \
     directlabels \
@@ -32,17 +35,23 @@ RUN apt-get update \
     fs \
     furrr \
     ggraph \
+    kableExtra \
     lobstr \
     pryr \
     rfm \
     rmdformats \
+    shinythemes \
+    shinyBS \
+    shinycssloaders \
     snakecase \
     survival \
     survminer \
     tidygraph \
     tidyquant \
     tidytext \
-    timetk
+    timetk \
+    visNetwork \
+    xplorerr
 
 RUN Rscript -e 'BiocManager::install("Rgraphviz")'
 
@@ -65,7 +74,8 @@ RUN 7z x /tmp/conffiles.7z \
   && cp conffiles/.gitconfig . \
   && cp conffiles/.Renviron  . \
   && cp conffiles/.Rprofile  . \
-  && cp conffiles/user-settings .rstudio/monitored/user-settings/ \
+  && mkdir -p .config/rstudio \
+  && cp conffiles/rstudio-prefs.json .config/rstudio/ \
   && chown -R rstudio:rstudio /home/rstudio \
   && rm -rfv conffiles/
 
