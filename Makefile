@@ -49,6 +49,16 @@ initial_rfm_models.html: exploring_retail_data.html
 
 
 
+mrproper:
+	rm -fv data/*.rds
+	rm -fv data/*.csv
+	rm -fv data/*.xlsx
+	rm -fv precompute/*.rds
+	rm -fv *.html
+	rm -rfv *_cache/
+	rm -rfv *_files/
+
+
 ### Docker targets
 docker-build-image: Dockerfile
 	docker build -t ${IMAGE_TAG} -f Dockerfile .
