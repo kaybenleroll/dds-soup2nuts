@@ -46,17 +46,23 @@ initial_arules_models.html: exploring_retail_data.html
 initial_timeseries_models.html: exploring_retail_data.html
 initial_btyd_models.html: exploring_retail_data.html
 initial_rfm_models.html: exploring_retail_data.html
+build_models.html: initial_arules_models.html initial_rfm_models.html
 
 
+clean-html:
+	rm -fv *.html
 
-mrproper:
+clean-cache:
+	rm -rfv *_cache
+	rm -rfv *_files
+
+
+mrproper: clean-html clean-cache
 	rm -fv data/*.rds
 	rm -fv data/*.csv
 	rm -fv data/*.xlsx
 	rm -fv precompute/*.rds
-	rm -fv *.html
-	rm -rfv *_cache/
-	rm -rfv *_files/
+	rm -fv full_deps.*
 
 
 ### Docker targets
