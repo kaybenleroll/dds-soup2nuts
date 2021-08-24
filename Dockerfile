@@ -1,4 +1,4 @@
-FROM rocker/verse:4.0.5
+FROM rocker/verse:4.1.0
 
 RUN apt-get update \
   && apt-get install -y --no-install-recommends \
@@ -14,6 +14,7 @@ RUN apt-get update \
   && rm -rf /var/lib/apt/lists/* \
   && install2.r --error \
     actuar \
+    anytime \
     arules \
     arulesCBA \
     arulesNBMiner \
@@ -34,6 +35,9 @@ RUN apt-get update \
     fitdistrplus \
     fs \
     furrr \
+    FactoMineR \
+    FactoInvestigate \
+    Factoshiny \
     ggraph \
     kableExtra \
     lobstr \
