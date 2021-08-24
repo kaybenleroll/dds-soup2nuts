@@ -1,4 +1,4 @@
-FROM rocker/verse:4.0.5
+FROM rocker/verse:4.1.0
 
 RUN apt-get update \
   && apt-get install -y --no-install-recommends \
