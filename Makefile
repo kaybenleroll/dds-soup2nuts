@@ -99,3 +99,5 @@ docker-clean: docker-stop-all
 docker-pull:
 	docker pull ${IMAGE_TAG}
 
+docker-push:
+	docker push ${IMAGE_TAG}
