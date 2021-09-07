@@ -1,19 +1,20 @@
 FROM rocker/verse:4.1.0
 
 RUN apt-get update \
+  && apt-get upgrade -y \
   && apt-get install -y --no-install-recommends \
+    byobu \
+    ditaa \
     graphviz \
-    less \
+    htop \
     libgsl-dev \
-    liblapack-dev \
-    libtk8.6 \
-    pbzip2 \
+    less \
     p7zip-full \
+    pbzip2 \
     tk8.6 \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/* \
   && install2.r --error \
-    actuar \
     anytime \
     arules \
     arulesCBA \
@@ -23,44 +24,44 @@ RUN apt-get update \
     BiocManager \
     BTYD \
     BTYDplus \
-    broom \
     CLVTools \
     conflicted \
     cowplot \
-    descriptr \
     DataExplorer \
-    DT \
+    descriptr \
     directlabels \
     evir \
+    factoextra \
+    FactoInvestigate \
+    FactoMineR \
+    Factoshiny \
     fitdistrplus \
     fs \
     furrr \
-    FactoMineR \
-    FactoInvestigate \
-    Factoshiny \
     ggraph \
+    ggwordcloud \
     kableExtra \
-    lobstr \
     pryr \
     rfm \
     rmdformats \
-    shinythemes \
+    sessioninfo \
     shinyBS \
     shinycssloaders \
+    shinythemes \
     snakecase \
     survival \
     survminer \
+    tictoc \
     tidygraph \
     tidyquant \
     tidytext \
-    timetk \
     visNetwork \
+    wordcloud2 \
     xplorerr
 
 RUN Rscript -e 'BiocManager::install("Rgraphviz")'
 
 COPY build/conffiles.7z           /tmp
-COPY build/docker_install_rpkgs.R /tmp
 
 WORKDIR /tmp
 
@@ -71,15 +72,14 @@ RUN git clone https://github.com/lindenb/makefile2graph.git \
 
 WORKDIR /home/rstudio
 
-RUN Rscript /tmp/docker_install_rpkgs.R
-
-RUN 7z x /tmp/conffiles.7z \
+RUN 7z x /tmp/conffiles.7z     \
   && cp conffiles/.bash*     . \
   && cp conffiles/.gitconfig . \
   && cp conffiles/.Renviron  . \
   && cp conffiles/.Rprofile  . \
-  && mkdir -p .config/rstudio \
+  && mkdir -p .config/rstudio  \
   && cp conffiles/rstudio-prefs.json .config/rstudio/ \
-  && chown -R rstudio:rstudio /home/rstudio \
+  && chown -R rstudio:rstudio /home/rstudio           \
   && rm -rfv conffiles/
+
 
